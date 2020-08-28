@@ -1,0 +1,69 @@
+import Array._
+
+/**
+ * This class encapsulates the behavior of a simple 9x9 Sudoku grid, namely:
+ *  - options for blank grid or pre-initialized one ✓
+ *  - slots for digits 1-9 in a 9x9 grid ✓
+ *  - functions determining if the current configuration is valid
+ *  - functions determining if a move results in a valid configuration
+ *  - a mutator function returning a new board from the current one making a certain move
+ *  - a function printing the grid as a move string ✓
+ *  - a function printing the grid human-readable ✓
+ *
+ *  Notes:
+ *  - "valid" refers to a configuration which doesn't break any core rules, i.e. repetition
+ *      in a box, column, or row. It does not rule out configs which will eventually lead to
+ *      a contradiction.
+ *  - a "move" is a length 3 string of digits, i.e. "713" means place a 7 in row 1 column 3.
+ *  - a "pre-initialized" grid is just a long string with a bunch of moves, i.e. "713814915"
+*/
+
+class SimpleGrid(initial : String = "", grid : Array[Array[Short]] = ofDim[Short](9,9)) {
+
+  // load in initial digits
+  if (!(initial == "")) {
+    for (i <- 0 until initial.length() by 3) {
+      val v = Integer.parseInt(initial.substring(i, i+1)).toShort
+      val r = Integer.parseInt(initial.substring(i+1, i+2))
+      val c = Integer.parseInt(initial.substring(i+2, i+3))
+
+      grid(r-1)(c-1) = v
+
+    }
+  }
+
+
+
+
+  def valid() : Boolean = {
+    true
+  }
+
+  def valid_after(move : String) : Boolean = {
+    true
+  }
+
+
+  def prettyPrint : Unit = {
+    println()
+    for (c <- 1 to 9) {
+      for (r <- 1 to 9) {
+        print(" " + grid(c-1)(r-1) + " ")
+      }
+      println()
+    }
+  }
+
+  override def toString: String = {
+    var str = ""
+    for (c <- 1 to 9) {
+      for (r <- 1 to 9) {
+        if (grid(r-1)(c-1) != 0) {
+          str += (""+grid(r-1)(c-1)) + r + c;
+        }
+      }
+    }
+
+    super.toString + "[" + str + "]"
+  }
+}
