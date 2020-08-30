@@ -18,7 +18,17 @@ import Array._
  *  - a "pre-initialized" grid is just a long string with a bunch of moves, i.e. "713814915"
 */
 
-class SimpleGrid(initial : String = "", grid : Array[Array[Short]] = ofDim[Short](9,9)) {
+trait Grid {
+  val EMPTY = 0
+
+  def valid : Boolean
+  def valid_after(move : String) : Boolean
+  def apply(move : String) : Grid
+  def digit_at(row : Int, column : Int) : Short
+  def prettyPrint : Unit
+}
+
+class SimpleGrid(initial : String = "", grid : Array[Array[Short]] = ofDim[Short](9,9)) extends Grid {
 
   // load in initial digits
   if (!(initial == "")) {
@@ -100,8 +110,11 @@ class SimpleGrid(initial : String = "", grid : Array[Array[Short]] = ofDim[Short
     ng.valid
   }
 
+  def digit_at(row: Int, column: Int): Short = {
+    grid(row)(column)
+  }
 
-  def prettyPrint() : Unit = {
+  def prettyPrint : Unit = {
     println()
     for (c <- 1 to 9) {
       for (r <- 1 to 9) {
