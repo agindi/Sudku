@@ -55,6 +55,13 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener) extends JPanel {
     _possibleDisplay = n :: _possibleDisplay
     updateNumbersDisplay()
   }
+  def clearPossibleDisplay(): Unit = {
+    _possibleDisplay = List()
+    updateNumbersDisplay()
+  }
+
+  def x: Int = x
+  def y: Int = y
 
   addMouseListener(new MouseAdapter {
     override def mouseClicked(e: MouseEvent): Unit = {
@@ -64,12 +71,6 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener) extends JPanel {
         tellParentIsSelected()
       }
 
-    }
-
-    override def mousePressed(e: MouseEvent): Unit = {
-    }
-
-    override def mouseReleased(e: MouseEvent): Unit = {
     }
 
     override def mouseEntered(e: MouseEvent): Unit = {
@@ -88,7 +89,6 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener) extends JPanel {
   def removeActiveBorder(): Unit = setBorder(defaultBorder)
 
   def updateNumbersDisplay(): Unit = {
-    println("Updating")
     removeAll()
     if(_determined) {
       displayDeterminantion()
@@ -96,7 +96,8 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener) extends JPanel {
       if(_possibleDisplay.nonEmpty)
         displayPossibilities()
     }
-    this.revalidate()
+    revalidate()
+    repaint()
   }
 
   def displayDeterminantion(): Unit ={
@@ -109,7 +110,6 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener) extends JPanel {
   }
 
   def displayPossibilities(): Unit ={
-    println(possibleDisplay)
     setLayout(new GridBagLayout)
     val gc = new GridBagConstraints()
     gc.weightx = 1

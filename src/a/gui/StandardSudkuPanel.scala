@@ -1,25 +1,31 @@
 package a.gui
 
-import java.awt.event.{ActionEvent, ActionListener, KeyAdapter, KeyEvent, KeyListener, MouseEvent, MouseListener}
-import java.awt.{Color, Dimension, Graphics, GridBagConstraints, GridBagLayout, GridLayout, Insets}
+import a.StandardSudkuGrid
+
+import java.awt.event.{ActionEvent, ActionListener, KeyAdapter, KeyEvent}
+import java.awt.{Color, Dimension, GridBagConstraints, GridBagLayout, Insets}
 import javax.swing.{BorderFactory, JPanel}
 import scala.Array.ofDim
 
 class StandardSudkuPanel extends JPanel{
   val gridSquarePanels: Array[Array[GridSquarePanel]] = ofDim[GridSquarePanel](9,9)
 
-  val selectionManager: ActionListener = (e: ActionEvent) => {
-    val gsp: GridSquarePanel = e.getSource.asInstanceOf[GridSquarePanel]
-    if (selectedGridSquare != null)
-      selectedGridSquare.active = false
-    if (gsp.active)
-      selectedGridSquare = gsp
-    else
-      selectedGridSquare = null
+  val selectionManager: ActionListener = new ActionListener() {
+    override def actionPerformed(e: ActionEvent): Unit = {
+      val gsp: GridSquarePanel = e.getSource.asInstanceOf[GridSquarePanel]
+      if (selectedGridSquare != null)
+        selectedGridSquare.active = false
+      if (gsp.active)
+        selectedGridSquare = gsp
+      else
+        selectedGridSquare = null
+    }
   }
   var selectedGridSquare: GridSquarePanel = gridSquarePanels(0)(0)
 
-  var shiftActive = false
+  var notationActive = false
+
+  val underlyingGrid: StandardSudkuGrid = new StandardSudkuGrid
 
   setLayout(new GridBagLayout)
   private[this] val gc = new GridBagConstraints
@@ -55,35 +61,33 @@ class StandardSudkuPanel extends JPanel{
     new Dimension(s,s)
   }
 
-  addKeyListener(new KeyListener {
+  addKeyListener(new KeyAdapter {
     override def keyTyped(e: KeyEvent): Unit = {
       if(selectedGridSquare == null) return
 
       val keyChar = e.getKeyChar
-      if(keyChar == 'd')
-        selectedGridSquare.clearDetermination()
+      if(keyChar == 'd') {
+          selectedGridSquare.clearPossibleDisplay()
+          selectedGridSquare.clearDetermination()
+      }
       if(keyChar == 's')
-        shiftActive = true
+        notationActive = true
       if(keyChar == 'a')
-        shiftActive = false
+        notationActive = false
       if(Character.isDigit(keyChar)){
         val asInt = Integer.parseInt(""+keyChar)
-        if(shiftActive) {
+        if(notationActive) {
           selectedGridSquare.addToPossibleDisplay(asInt)
         } else {
           selectedGridSquare.determine(asInt)
+          val x = selectedGridSquare.x
+          val y = selectedGridSquare.y
+          underlyingGrid.grid(x)(y).determine(asInt)
         }
       }
 
     }
 
-    override def keyPressed(e: KeyEvent): Unit = {
-
-    }
-
-    override def keyReleased(e: KeyEvent): Unit = {
-
-    }
   })
   setFocusable(true)
   requestFocus()
