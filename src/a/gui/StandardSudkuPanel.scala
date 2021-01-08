@@ -1,8 +1,8 @@
 package a.gui
 
-import a.StandardSudkuGrid
+import a.{Point, StandardSudkuGrid}
 
-import java.awt.event.{ActionEvent, ActionListener, KeyAdapter, KeyEvent}
+import java.awt.event.{ActionEvent, ActionListener, ComponentAdapter, ComponentEvent, KeyAdapter, KeyEvent}
 import java.awt.{Color, Dimension, GridBagConstraints, GridBagLayout, Insets}
 import javax.swing.{BorderFactory, JPanel}
 import scala.Array.ofDim
@@ -19,6 +19,7 @@ class StandardSudkuPanel extends JPanel{
         selectedGridSquare = gsp
       else
         selectedGridSquare = null
+      requestFocus()
     }
   }
   var selectedGridSquare: GridSquarePanel = gridSquarePanels(0)(0)
@@ -26,6 +27,7 @@ class StandardSudkuPanel extends JPanel{
   var notationActive = false
 
   val underlyingGrid: StandardSudkuGrid = new StandardSudkuGrid
+  def getUnderlyingGrid: StandardSudkuGrid = underlyingGrid
 
   setLayout(new GridBagLayout)
   private[this] val gc = new GridBagConstraints
@@ -38,7 +40,7 @@ class StandardSudkuPanel extends JPanel{
     val box = new JPanel(new GridBagLayout)
     box.setPreferredSize(new Dimension(3,3))
     for(i <- 0 to 2; j <- 0 to 2){
-      gridSquarePanels(x_b*3+i)(y_b*3+j) = new GridSquarePanel(x_b*3+i, y_b*3+j, selectionManager)
+      gridSquarePanels(x_b*3+i)(y_b*3+j) = new GridSquarePanel(x_b*3+i, y_b*3+j, selectionManager, underlyingGrid)
       gc.gridx = i; gc.gridy = j
       box.add(gridSquarePanels(x_b*3+i)(y_b*3+j), gc)
     }
@@ -52,7 +54,7 @@ class StandardSudkuPanel extends JPanel{
 
   override def getPreferredSize: Dimension = {
     val parentContainer = getParent
-    if(parentContainer == null) return new Dimension(100,100)
+    if(parentContainer == null) return new Dimension(500,500)
     val parentPanel = parentContainer.asInstanceOf[JPanel]
     val max: Dimension = parentPanel.getSize
     val width = max.width
@@ -61,14 +63,23 @@ class StandardSudkuPanel extends JPanel{
     new Dimension(s,s)
   }
 
+  def updateDisplay(): Unit = {
+    for(i <- 0 to 8; j <- 0 to 8){
+      gridSquarePanels(i)(j).updateNumbersDisplay()
+    }
+  }
+
   addKeyListener(new KeyAdapter {
     override def keyTyped(e: KeyEvent): Unit = {
       if(selectedGridSquare == null) return
 
       val keyChar = e.getKeyChar
       if(keyChar == 'd') {
-          selectedGridSquare.clearPossibleDisplay()
-          selectedGridSquare.clearDetermination()
+        selectedGridSquare.clearPossibleDisplay()
+        val x = selectedGridSquare.x()
+        val y = selectedGridSquare.y()
+        underlyingGrid.clearSquare(new Point(x, y))
+        selectedGridSquare.updateNumbersDisplay()
       }
       if(keyChar == 's')
         notationActive = true
@@ -79,16 +90,24 @@ class StandardSudkuPanel extends JPanel{
         if(notationActive) {
           selectedGridSquare.addToPossibleDisplay(asInt)
         } else {
-          selectedGridSquare.determine(asInt)
-          val x = selectedGridSquare.x
-          val y = selectedGridSquare.y
-          underlyingGrid.grid(x)(y).determine(asInt)
+          val x = selectedGridSquare.x()
+          val y = selectedGridSquare.y()
+          underlyingGrid.determineSquare(new Point(x, y), asInt)
+          selectedGridSquare.updateNumbersDisplay()
         }
       }
 
     }
 
   })
+  addComponentListener(new ComponentAdapter {
+    override def componentResized(e: ComponentEvent): Unit = {
+      for(i <- 0 to 8; j <- 0 to 8){
+        gridSquarePanels(i)(j).updateNumbersDisplay()
+      }
+    }
+  })
+
   setFocusable(true)
   requestFocus()
 }

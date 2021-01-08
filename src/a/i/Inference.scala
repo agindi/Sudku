@@ -1,20 +1,20 @@
 package a.i
 
-import a.{StandardSudkuGrid, SudkuGridSquare}
+import a.{Point, StandardSudkuGrid}
 
-abstract class Inference(ssg: StandardSudkuGrid, squaresOfInterest: Array[Array[Int]]) {
+abstract class Inference(ssg: StandardSudkuGrid, squaresOfInterest: Array[Point]) {
 
   def preconditionsMet(): Boolean
   def applyInference(): Unit
 
-  def sq(n: Int): SudkuGridSquare={
-    ssg.grid(x(n))(y(n))
-  }
   def x(n: Int): Int ={
-    squaresOfInterest(n)(0)
+    squaresOfInterest(n).getX
   }
   def y(n: Int): Int={
-    squaresOfInterest(n)(1)
+    squaresOfInterest(n).getY
+  }
+  def sq(n: Int): Point={
+    squaresOfInterest(n)
   }
 
 

@@ -1,12 +1,15 @@
 package a.gui
 
+import a.{Point, StandardSudkuGrid}
+
 import java.awt.{Color, Dimension, Font, Graphics, Graphics2D, GridBagConstraints, GridBagLayout, GridLayout}
 import java.awt.event.{ActionEvent, ActionListener, MouseAdapter, MouseEvent, MouseListener}
 import javax.swing.border.Border
 import javax.swing.{BorderFactory, JLabel, JPanel}
 
-class GridSquarePanel(x: Int, y: Int, selector: ActionListener) extends JPanel {
+class GridSquarePanel(x: Int, y: Int, selector: ActionListener, overallGrid: StandardSudkuGrid) extends JPanel {
 
+  val coordinate = new Point(x, y)
   val defaultColor: Color = Color.decode("#fcfdff")
   val mouseOverColor: Color = Color.decode("#e6eeff")
   val defaultBorder: Border = BorderFactory.createLineBorder(Color.BLACK, 1)
@@ -22,35 +25,14 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener) extends JPanel {
     if(!_active) removeActiveBorder()
   }
 
-  private[this] var _determined: Boolean = false
-  private[this] var _determinedValue: Int = -1
-  private[this] var _possibleValues: List[Int] = List(1,2,3,4,5,6,7,8,9)
   private[this] var _possibleDisplay: List[Int] = List()
 
+  def determined: Boolean = overallGrid.isSquareDetermined(coordinate)
+  def determinedValue: Int = overallGrid.getSquareDetermination(coordinate)
 
+  def possibleValues: List[Int] = overallGrid.getSquarePossibilities(coordinate)
 
-  def determined: Boolean = _determined
-  def determinedValue: Int = _determinedValue
-  def determine(n: Int): Unit = {
-    _determined = true
-    _determinedValue = n
-    updateNumbersDisplay()
-  }
-  def clearDetermination(): Unit = {
-    _determined = false
-    _determinedValue = -1
-    updateNumbersDisplay()
-  }
-
-  def possibleValues: List[Int] = _possibleValues
-  def possibleValues_=(value: List[Int]): Unit = {
-    _possibleValues = value
-  }
   def possibleDisplay: List[Int] = _possibleDisplay
-  def possibleDisplay_=(value: List[Int]): Unit = {
-    _possibleDisplay = value
-    updateNumbersDisplay()
-  }
   def addToPossibleDisplay(n: Int): Unit = {
     _possibleDisplay = n :: _possibleDisplay
     updateNumbersDisplay()
@@ -59,9 +41,17 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener) extends JPanel {
     _possibleDisplay = List()
     updateNumbersDisplay()
   }
+  def removeFromPossibleDisplay(values: List[Int]): Unit = {
+    _possibleDisplay.filter((p: Int) => !values.contains(p))
+    updateNumbersDisplay()
+  }
+  def intersectWithPossibleDisplay(values: List[Int]): Unit = {
+    _possibleDisplay.filter((p: Int) => values.contains(p))
+    updateNumbersDisplay()
+  }
 
-  def x: Int = x
-  def y: Int = y
+  def x(): Int = x
+  def y(): Int = y
 
   addMouseListener(new MouseAdapter {
     override def mouseClicked(e: MouseEvent): Unit = {
@@ -90,10 +80,10 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener) extends JPanel {
 
   def updateNumbersDisplay(): Unit = {
     removeAll()
-    if(_determined) {
+    if(determined) {
       displayDeterminantion()
     } else {
-      if(_possibleDisplay.nonEmpty)
+      if(possibleDisplay.nonEmpty)
         displayPossibilities()
     }
     revalidate()
@@ -131,5 +121,5 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener) extends JPanel {
 
   setBackground(defaultColor)
   setBorder(defaultBorder)
-  setPreferredSize(new Dimension(50,50))
+  setPreferredSize(new Dimension(55,55))
 }

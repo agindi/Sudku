@@ -5,50 +5,50 @@ import a.i.{NakedSingle, PropogateDetermination}
 object StandardSolver extends App{
   val g1 = new StandardSudkuGrid
 
-  g1.grid(0)(0).determine(2)
-  g1.grid(1)(0).determine(6)
-  g1.grid(3)(0).determine(3)
-  g1.grid(5)(0).determine(5)
-  g1.grid(7)(0).determine(8)
-  g1.grid(8)(0).determine(9)
+  g1.determineSquare(new Point(0, 0), 2)
+  g1.determineSquare(new Point(1, 0), 6)
+  g1.determineSquare(new Point(3, 0), 3)
+  g1.determineSquare(new Point(5, 0), 5)
+  g1.determineSquare(new Point(7, 0), 8)
+  g1.determineSquare(new Point(8, 0), 9)
 
-  g1.grid(0)(1).determine(8)
-  g1.grid(2)(1).determine(5)
-  g1.grid(4)(1).determine(9)
-  g1.grid(6)(1).determine(1)
-  g1.grid(8)(1).determine(3)
+  g1.determineSquare(new Point(0, 1), 8)
+  g1.determineSquare(new Point(2, 1), 5)
+  g1.determineSquare(new Point(4, 1), 9)
+  g1.determineSquare(new Point(6, 1), 1)
+  g1.determineSquare(new Point(8, 1), 3)
 
-  g1.grid(1)(2).determine(9)
-  g1.grid(7)(2).determine(4)
+  g1.determineSquare(new Point(1, 2), 9)
+  g1.determineSquare(new Point(7, 2), 4)
 
-  g1.grid(0)(3).determine(3)
-  g1.grid(3)(3).determine(9)
-  g1.grid(5)(3).determine(6)
-  g1.grid(8)(3).determine(1)
+  g1.determineSquare(new Point(0, 3), 3)
+  g1.determineSquare(new Point(3, 3), 9)
+  g1.determineSquare(new Point(5, 3), 6)
+  g1.determineSquare(new Point(8, 3), 1)
 
-  g1.grid(1)(4).determine(1)
-  g1.grid(7)(4).determine(7)
+  g1.determineSquare(new Point(1, 4), 1)
+  g1.determineSquare(new Point(7, 4), 7)
 
-  g1.grid(0)(5).determine(4)
-  g1.grid(3)(5).determine(7)
-  g1.grid(5)(5).determine(1)
-  g1.grid(8)(5).determine(6)
+  g1.determineSquare(new Point(0, 5), 4)
+  g1.determineSquare(new Point(3, 5), 7)
+  g1.determineSquare(new Point(5, 5), 1)
+  g1.determineSquare(new Point(8, 5), 6)
 
-  g1.grid(1)(6).determine(4)
-  g1.grid(7)(6).determine(1)
+  g1.determineSquare(new Point(1, 6), 4)
+  g1.determineSquare(new Point(7, 6), 1)
 
-  g1.grid(0)(7).determine(6)
-  g1.grid(2)(7).determine(9)
-  g1.grid(4)(7).determine(4)
-  g1.grid(6)(7).determine(8)
-  g1.grid(8)(7).determine(2)
+  g1.determineSquare(new Point(0, 7), 6)
+  g1.determineSquare(new Point(2, 7), 9)
+  g1.determineSquare(new Point(4, 7), 4)
+  g1.determineSquare(new Point(6, 7), 8)
+  g1.determineSquare(new Point(8, 7), 2)
 
-  g1.grid(0)(8).determine(7)
-  g1.grid(1)(8).determine(8)
-  g1.grid(3)(8).determine(5)
-  g1.grid(5)(8).determine(2)
-  g1.grid(7)(8).determine(3)
-  g1.grid(8)(8).determine(4)
+  g1.determineSquare(new Point(0, 8), 7)
+  g1.determineSquare(new Point(1, 8), 8)
+  g1.determineSquare(new Point(3, 8), 5)
+  g1.determineSquare(new Point(5, 8), 2)
+  g1.determineSquare(new Point(7, 8), 3)
+  g1.determineSquare(new Point(8, 8), 4)
 
   println(g1.prettyPrint())
 
@@ -56,7 +56,7 @@ object StandardSolver extends App{
   while(det.length != 81){
     // first prop det on the det squares
     for(determinedSq <- det){
-      val inf = new PropogateDetermination(g1, Array(Array(determinedSq.getX, determinedSq.getY)))
+      val inf = new PropogateDetermination(g1, Array(new Point(determinedSq.getX, determinedSq.getY)))
       if(inf.preconditionsMet())
         inf.applyInference()
     }
@@ -64,16 +64,15 @@ object StandardSolver extends App{
     // now, search for naked singles
     for(i <- 0 to 8){
       for(j <- 0 to 8){
-        val inf = new NakedSingle(g1, Array(Array(i, j)))
+        val inf = new NakedSingle(g1, Array(new Point(i, j)))
         if(inf.preconditionsMet()) {
           println("Naked Single @(" + i + ", " + j + ")")
           inf.applyInference()
         }
       }
     }
-    println(g1.toString())
+    println(g1.prettyPrint())
     det = g1.getDeterminedSquares
   }
-  println(g1.prettyPrint())
 
 }
