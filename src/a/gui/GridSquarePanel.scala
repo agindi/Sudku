@@ -35,18 +35,23 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener, overallGrid: Sta
   def possibleDisplay: List[Int] = _possibleDisplay
   def addToPossibleDisplay(n: Int): Unit = {
     _possibleDisplay = n :: _possibleDisplay
-    updateNumbersDisplay()
   }
   def clearPossibleDisplay(): Unit = {
     _possibleDisplay = List()
-    updateNumbersDisplay()
   }
   def removeFromPossibleDisplay(values: List[Int]): Unit = {
     _possibleDisplay.filter((p: Int) => !values.contains(p))
-    updateNumbersDisplay()
   }
   def intersectWithPossibleDisplay(values: List[Int]): Unit = {
     _possibleDisplay.filter((p: Int) => values.contains(p))
+  }
+
+  def showAllPossibilities(): Unit = {
+    _possibleDisplay = possibleValues
+    updateNumbersDisplay()
+  }
+  def hideAllPossibilities(): Unit = {
+    clearPossibleDisplay()
     updateNumbersDisplay()
   }
 
@@ -90,7 +95,7 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener, overallGrid: Sta
     repaint()
   }
 
-  def displayDeterminantion(): Unit ={
+  private[this] def displayDeterminantion(): Unit ={
     setLayout(new GridBagLayout)
     val s = (getWidth / 4) * 3
     val lab = new JLabel(""+determinedValue)
@@ -99,7 +104,9 @@ class GridSquarePanel(x: Int, y: Int, selector: ActionListener, overallGrid: Sta
     add(lab)
   }
 
-  def displayPossibilities(): Unit ={
+  private[this] def displayPossibilities(): Unit ={
+    intersectWithPossibleDisplay(possibleValues)
+
     setLayout(new GridBagLayout)
     val gc = new GridBagConstraints()
     gc.weightx = 1

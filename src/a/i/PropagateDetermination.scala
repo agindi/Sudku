@@ -2,7 +2,7 @@ package a.i
 
 import a.{Point, StandardSudkuGrid}
 
-class PropogateDetermination(ssg: StandardSudkuGrid, squaresOfInterest: Array[Point]) extends Inference(ssg, squaresOfInterest) {
+class PropagateDetermination(ssg: StandardSudkuGrid, squaresOfInterest: Array[Point]) extends Inference(ssg, squaresOfInterest) {
   override def preconditionsMet(): Boolean ={
     ssg.isSquareDetermined(sq(0))
   }

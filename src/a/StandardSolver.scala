@@ -1,9 +1,48 @@
 package a
 
-import a.i.{NakedSingle, PropogateDetermination}
+import a.i.{BoxPairIdentification, NakedSingle, PropagateDetermination}
 
-object StandardSolver extends App{
-  val g1 = new StandardSudkuGrid
+object StandardSolver {
+
+  def generateApplicableNakedSingleInferences(grid: StandardSudkuGrid): List[NakedSingle] = {
+    var out: List[NakedSingle] = List()
+
+    for(i <- 0 to 8; j <- 0 to 8){
+      val inf = new NakedSingle(grid, Array(new Point(i, j)))
+      if(inf.preconditionsMet()) {
+        out = inf :: out
+      }
+    }
+
+    out
+  }
+
+  def generateApplicablePropagateDeterminationInferences(grid: StandardSudkuGrid):
+        List[PropagateDetermination] = {
+    var out: List[PropagateDetermination] = List()
+    val det = grid.getDeterminedSquares
+    for(d <- det)
+      out = new PropagateDetermination(grid, Array(new Point(d.getX, d.getY))) :: out
+    out
+  }
+
+  def generateApplicableBoxPairIdentificationInferences(grid: StandardSudkuGrid): List[BoxPairIdentification] = {
+    var out: List[BoxPairIdentification] = List()
+    for{
+      x_b <- 0 to 2
+      y_b <- 0 to 2
+      i0 <- 0 to 2; j0 <- 0 to 2
+      i1 <- 0 to 2; j1 <- 0 to 2
+    } {
+      val inf = new BoxPairIdentification(grid, Array(new Point(x_b*3+i0, y_b*3+j0), new Point(x_b*3+i1, y_b*3+j1)))
+      if(inf.preconditionsMet())
+        out = inf :: out
+    }
+    println(out.length)
+    out
+  }
+
+  /*val g1 = new StandardSudkuGrid
 
   g1.determineSquare(new Point(0, 0), 2)
   g1.determineSquare(new Point(1, 0), 6)
@@ -74,5 +113,5 @@ object StandardSolver extends App{
     println(g1.prettyPrint())
     det = g1.getDeterminedSquares
   }
-
+*/
 }

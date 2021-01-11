@@ -8,6 +8,7 @@ import javax.swing.{BorderFactory, JPanel}
 import scala.Array.ofDim
 
 class StandardSudkuPanel extends JPanel{
+
   val gridSquarePanels: Array[Array[GridSquarePanel]] = ofDim[GridSquarePanel](9,9)
 
   val selectionManager: ActionListener = new ActionListener() {
@@ -68,6 +69,17 @@ class StandardSudkuPanel extends JPanel{
       gridSquarePanels(i)(j).updateNumbersDisplay()
     }
   }
+
+  def showAllPossibilities(): Unit = {
+    for(i <- 0 to 8; j <- 0 to 8)
+      gridSquarePanels(i)(j).showAllPossibilities()
+    updateDisplay()
+  }
+  def hideAllPossibilities(): Unit = {
+    for(i <- 0 to 8; j <- 0 to 8)
+      gridSquarePanels(i)(j).hideAllPossibilities()
+  }
+
 
   addKeyListener(new KeyAdapter {
     override def keyTyped(e: KeyEvent): Unit = {

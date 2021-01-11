@@ -1,8 +1,6 @@
 package a.gui
 
-import a.Point
-import a.StandardSolver.{det, g1}
-import a.i.{NakedSingle, PropogateDetermination}
+import a.StandardSolver
 
 import java.awt.event.{ActionEvent, ActionListener}
 import java.awt.{GridBagConstraints, GridBagLayout}
@@ -22,28 +20,47 @@ class StandardGUI extends JFrame{
   startButton.addActionListener(new ActionListener {
     override def actionPerformed(e: ActionEvent): Unit = {
       val ssg = sudukuPanel.getUnderlyingGrid
-      // first prop det on the det squares
-      for(determinedSq <- ssg.getDeterminedSquares){
-        val inf = new PropogateDetermination(ssg, Array(new Point(determinedSq.getX, determinedSq.getY)))
-        if(inf.preconditionsMet())
-          inf.applyInference()
+
+      val pds = StandardSolver.generateApplicablePropagateDeterminationInferences(ssg)
+
+      for(pd <- pds)
+        if(pd.preconditionsMet())
+          pd.applyInference()
+
+      val nss = StandardSolver.generateApplicableNakedSingleInferences(ssg)
+
+      for(ns <- nss)
+        if(ns.preconditionsMet())
+          ns.applyInference()
+
+      val bps = StandardSolver.generateApplicableBoxPairIdentificationInferences(ssg)
+
+      for(bp <- bps) {
+        if(bp.preconditionsMet())
+          bp.applyInference()
       }
 
-      // now, search for naked singles
-      for(i <- 0 to 8){
-        for(j <- 0 to 8){
-          val inf = new NakedSingle(ssg, Array(new Point(i, j)))
-          if(inf.preconditionsMet()) {
-            println("Naked Single @(" + i + ", " + j + ")")
-            inf.applyInference()
-          }
-        }
-      }
       sudukuPanel.updateDisplay()
     }
   })
 
+  val showPosButton = new JButton("Show")
+  val hidePosButton = new JButton("Hide")
+
+  showPosButton.addActionListener(new ActionListener {
+    override def actionPerformed(e: ActionEvent): Unit = {
+      sudukuPanel.showAllPossibilities()
+    }
+  })
+  hidePosButton.addActionListener(new ActionListener {
+    override def actionPerformed(e: ActionEvent): Unit = {
+      sudukuPanel.hideAllPossibilities()
+    }
+  })
+
   controlPanel.add(startButton)
+  controlPanel.add(showPosButton)
+  controlPanel.add(hidePosButton)
   controlPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED))
 
   contGC.weightx = 1.0
@@ -63,5 +80,6 @@ class StandardGUI extends JFrame{
   setContentPane(cont)
   setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
   setSize(1200,1000)
+  setResizable(false)
   setVisible(true)
 }

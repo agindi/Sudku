@@ -7,4 +7,13 @@ class Point(x: Int, y: Int) {
   def getX:Int = _x
   def getY:Int = _y
 
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case p: Point =>
+        p.getX == _x && p.getY == _y
+      case _ =>
+        false
+    }
+  }
+
 }

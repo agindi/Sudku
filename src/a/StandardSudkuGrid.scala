@@ -105,6 +105,10 @@ class StandardSudkuGrid {
     getSQ(point).clear()
   }
 
+  def filled(): Boolean ={
+    getDeterminedSquares.length == 81
+  }
+
   private[this] def getSQ(point : Point): SudkuGridSquare = {
     grid(point.getX)(point.getY)
   }
@@ -145,10 +149,6 @@ class StandardSudkuGrid {
     override def toString: String ={
       if(determined) "V:["+determinedValue+"]"
       else "PVS:"+possibleValues.toString().substring(4).replaceAll("\\s", "")
-    }
-
-    def matchOtherSquare(s: SudkuGridSquare): Boolean ={
-      possibleValues.equals(s.getPossibleValues)
     }
 
   }
