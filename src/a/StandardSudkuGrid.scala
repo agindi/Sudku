@@ -35,7 +35,7 @@ class StandardSudkuGrid {
       for(j <- 0 to 2){
         val x_i = x_b + i
         val y_i = y_b + j
-        if(y_i != y && x_i != x) out = new Point(x_i, y_i) :: out
+        if(!(y_i == y && x_i == x)) out = new Point(x_i, y_i) :: out
       }
     }
     out
@@ -88,7 +88,7 @@ class StandardSudkuGrid {
     getSQ(point).getDeterminedValue
   }
   def getSquarePossibilities(point : Point) : List[Int] = {
-    if(isSquareDetermined(point)) List()
+    if(isSquareDetermined(point)) List(getSquareDetermination(point))
     else getSQ(point).getPossibleValues
   }
   def removeSquarePossibility(point : Point, n : Int): Unit = {

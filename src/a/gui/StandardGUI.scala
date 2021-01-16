@@ -33,6 +33,12 @@ class StandardGUI extends JFrame{
         if(ns.preconditionsMet())
           ns.applyInference()
 
+      val css = StandardSolver.generateApplicableClothedSingleInferences(ssg)
+
+      for(cs <- css)
+        if(cs.preconditionsMet())
+          cs.applyInference()
+
       val bps = StandardSolver.generateApplicableBoxPairIdentificationInferences(ssg)
 
       for(bp <- bps) {

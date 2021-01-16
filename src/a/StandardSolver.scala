@@ -1,6 +1,6 @@
 package a
 
-import a.i.{BoxPairIdentification, LinePairIdentification, NakedSingle, PropagateDetermination}
+import a.i.{BoxPairIdentification, ClothedSingle, LinePairIdentification, NakedSingle, PropagateDetermination}
 
 object StandardSolver {
 
@@ -9,6 +9,19 @@ object StandardSolver {
 
     for(i <- 0 to 8; j <- 0 to 8){
       val inf = new NakedSingle(grid, Array(new Point(i, j)))
+      if(inf.preconditionsMet()) {
+        out = inf :: out
+      }
+    }
+
+    out
+  }
+
+  def generateApplicableClothedSingleInferences(grid: StandardSudkuGrid): List[ClothedSingle] = {
+    var out: List[ClothedSingle] = List()
+
+    for(i <- 0 to 8; j <- 0 to 8){
+      val inf = new ClothedSingle(grid, Array(new Point(i, j)))
       if(inf.preconditionsMet()) {
         out = inf :: out
       }
@@ -38,8 +51,6 @@ object StandardSolver {
       if(inf.preconditionsMet())
         out = inf :: out
     }
-
-    println("HERE: " + out.length)
 
     out
   }

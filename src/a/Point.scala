@@ -16,4 +16,8 @@ class Point(x: Int, y: Int) {
     }
   }
 
+  override def toString: String = {
+    "(" + _x + ", " + _y + ")"
+  }
+
 }
