@@ -40,6 +40,13 @@ class StandardGUI extends JFrame{
           bp.applyInference()
       }
 
+      val lps = StandardSolver.generateApplicableLinePairIdentificationInferences(ssg)
+
+      for(lp <- lps) {
+        if(lp.preconditionsMet())
+          lp.applyInference()
+      }
+
       sudukuPanel.updateDisplay()
     }
   })

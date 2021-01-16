@@ -88,7 +88,8 @@ class StandardSudkuGrid {
     getSQ(point).getDeterminedValue
   }
   def getSquarePossibilities(point : Point) : List[Int] = {
-    getSQ(point).getPossibleValues
+    if(isSquareDetermined(point)) List()
+    else getSQ(point).getPossibleValues
   }
   def removeSquarePossibility(point : Point, n : Int): Unit = {
     getSQ(point).removePossibility(n)

@@ -1,6 +1,6 @@
 package a
 
-import a.i.{BoxPairIdentification, NakedSingle, PropagateDetermination}
+import a.i.{BoxPairIdentification, LinePairIdentification, NakedSingle, PropagateDetermination}
 
 object StandardSolver {
 
@@ -29,16 +29,37 @@ object StandardSolver {
   def generateApplicableBoxPairIdentificationInferences(grid: StandardSudkuGrid): List[BoxPairIdentification] = {
     var out: List[BoxPairIdentification] = List()
     for{
-      x_b <- 0 to 2
-      y_b <- 0 to 2
-      i0 <- 0 to 2; j0 <- 0 to 2
-      i1 <- 0 to 2; j1 <- 0 to 2
+      x_1 <- 0 to 8
+      y_1 <- 0 to 8
+      x_2 <- 0 to 8
+      y_2 <- 0 to 8
     } {
-      val inf = new BoxPairIdentification(grid, Array(new Point(x_b*3+i0, y_b*3+j0), new Point(x_b*3+i1, y_b*3+j1)))
+      val inf = new BoxPairIdentification(grid, Array(new Point(x_1, y_1), new Point(x_2, y_2)))
       if(inf.preconditionsMet())
         out = inf :: out
     }
-    println(out.length)
+
+    println("HERE: " + out.length)
+
+    out
+  }
+  def generateApplicableLinePairIdentificationInferences(grid: StandardSudkuGrid): List[LinePairIdentification] = {
+    var out: List[LinePairIdentification] = List()
+    for{
+      x_1 <- 0 to 8
+      y_1 <- 0 to 8
+      x_2 <- x_1 to 8
+      y_2 <- y_1 to 8
+    } {
+      val inf1 = new LinePairIdentification(grid, Array(new Point(x_1, y_1), new Point(x_1, y_2)))
+      if(inf1.preconditionsMet())
+        out = inf1 :: out
+
+      val inf2 = new LinePairIdentification(grid, Array(new Point(x_1, y_1), new Point(x_2, y_1)))
+      if(inf2.preconditionsMet())
+        out = inf2 :: out
+    }
+
     out
   }
 

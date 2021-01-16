@@ -86,13 +86,13 @@ class StandardSudkuPanel extends JPanel{
       if(selectedGridSquare == null) return
 
       val keyChar = e.getKeyChar
-      if(keyChar == 'd') {
+      /*if(keyChar == 'd') {
         selectedGridSquare.clearPossibleDisplay()
         val x = selectedGridSquare.x()
         val y = selectedGridSquare.y()
         underlyingGrid.clearSquare(new Point(x, y))
         selectedGridSquare.updateNumbersDisplay()
-      }
+      }*/
       if(keyChar == 's')
         notationActive = true
       if(keyChar == 'a')

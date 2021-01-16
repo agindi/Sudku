@@ -11,18 +11,22 @@ class BoxPairIdentification(ssg: StandardSudkuGrid, squaresOfInterest: Array[Poi
     val pos0 = ssg.getSquarePossibilities(sq(0))
     val pos1 = ssg.getSquarePossibilities(sq(1))
 
-    val intersection = pos0.intersect(pos1)
+    if(pos0.length != 2 || pos1.length != 2) return false
 
-    if(intersection.length != 2) return false
+    val pair = pos0.intersect(pos1)
+
+    if(pair.length != 2) return false
 
     true
   }
 
   override def applyInference(): Unit = {
-    val relevantSqs: List[Point] = ssg.getOthersInBox(x(0), y(0))
+    val pair = ssg.getSquarePossibilities(sq(0))
 
-    val values = ssg.getSquarePossibilities(sq(0))
-
-    relevantSqs.foreach((square: Point) => ssg.removeSquarePossibilities(square, values))
+    for(square <- ssg.getOthersInBox(x(0), y(0))){
+      if(!square.equals(sq(0)) && !square.equals(sq(1))){
+        ssg.removeSquarePossibilities(square, pair)
+      }
+    }
   }
 }
