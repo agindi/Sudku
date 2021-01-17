@@ -33,4 +33,3 @@ class ClothedSingle(ssg: StandardSudkuGrid, squaresOfInterest: Array[Point]) ext
     ssg.determineSquare(sq(0), unique)
   }
 }
-

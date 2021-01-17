@@ -5,7 +5,7 @@ import a.StandardSolver
 import java.awt.event.{ActionEvent, ActionListener}
 import java.awt.{GridBagConstraints, GridBagLayout}
 import javax.swing.border.EtchedBorder
-import javax.swing.{BorderFactory, JButton, JFrame, JPanel}
+import javax.swing.{BorderFactory, JButton, JCheckBox, JFrame, JPanel}
 
 class StandardGUI extends JFrame{
 
@@ -14,7 +14,17 @@ class StandardGUI extends JFrame{
 
   val sudukuPanel: StandardSudkuPanel = new StandardSudkuPanel
 
-  val controlPanel = new JPanel
+  val controlPanel = new JPanel(new GridBagLayout)
+  val gc = new GridBagConstraints
+
+  val singlesButton = new JCheckBox("Singles")
+  val pairsButton = new JCheckBox("Pairs")
+
+  gc.gridx = 0; gc.gridy = 0
+  controlPanel.add(singlesButton, gc)
+  gc.gridx = 1;
+  controlPanel.add(pairsButton, gc)
+
   val startButton: JButton = new JButton("Start")
 
   startButton.addActionListener(new ActionListener {
@@ -27,30 +37,35 @@ class StandardGUI extends JFrame{
         if(pd.preconditionsMet())
           pd.applyInference()
 
-      val nss = StandardSolver.generateApplicableNakedSingleInferences(ssg)
+      if(singlesButton.isSelected) {
+        val nss = StandardSolver.generateApplicableNakedSingleInferences(ssg)
 
-      for(ns <- nss)
-        if(ns.preconditionsMet())
-          ns.applyInference()
+        for (ns <- nss)
+          if (ns.preconditionsMet())
+            ns.applyInference()
 
-      val css = StandardSolver.generateApplicableClothedSingleInferences(ssg)
+        val css = StandardSolver.generateApplicableClothedSingleInferences(ssg)
 
-      for(cs <- css)
-        if(cs.preconditionsMet())
-          cs.applyInference()
-
-      val bps = StandardSolver.generateApplicableBoxPairIdentificationInferences(ssg)
-
-      for(bp <- bps) {
-        if(bp.preconditionsMet())
-          bp.applyInference()
+        for (cs <- css)
+          if (cs.preconditionsMet())
+            cs.applyInference()
       }
 
-      val lps = StandardSolver.generateApplicableLinePairIdentificationInferences(ssg)
+      if(pairsButton.isSelected) {
 
-      for(lp <- lps) {
-        if(lp.preconditionsMet())
-          lp.applyInference()
+        val bps = StandardSolver.generateApplicableBoxPairIdentificationInferences(ssg)
+
+        for (bp <- bps) {
+          if (bp.preconditionsMet())
+            bp.applyInference()
+        }
+
+        val lps = StandardSolver.generateApplicableLinePairIdentificationInferences(ssg)
+
+        for (lp <- lps) {
+          if (lp.preconditionsMet())
+            lp.applyInference()
+        }
       }
 
       sudukuPanel.updateDisplay()
@@ -71,9 +86,12 @@ class StandardGUI extends JFrame{
     }
   })
 
-  controlPanel.add(startButton)
-  controlPanel.add(showPosButton)
-  controlPanel.add(hidePosButton)
+  gc.gridx = 0; gc.gridy = 1
+  controlPanel.add(startButton, gc)
+  gc.gridx = 1; gc.gridy = 1
+  controlPanel.add(showPosButton, gc)
+  gc.gridx = 2; gc.gridy = 1
+  controlPanel.add(hidePosButton, gc)
   controlPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED))
 
   contGC.weightx = 1.0
